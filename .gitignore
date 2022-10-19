@@ -5,4 +5,7 @@
 /public/bundles/
 /var/
 /vendor/
+composer.lock
+symfony.lock
+/data/**
 ###< symfony/framework-bundle ###
