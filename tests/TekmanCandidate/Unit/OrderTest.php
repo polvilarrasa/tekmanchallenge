@@ -1,9 +1,9 @@
 <?php
 
 use App\TekmanCandidate\Domain\Order\Order;
+use App\TekmanCandidate\Domain\Order\OrderNameBlankException;
 use App\TekmanCandidate\Domain\Order\OrderNameLengthException;
 use PHPUnit\Framework\TestCase;
-
 use Symfony\Component\Uid\Uuid;
 
 final class OrderTest extends TestCase
@@ -19,21 +19,12 @@ final class OrderTest extends TestCase
         $this->assertEquals($name, $order->name());
     }
 
-    public function testOrderIdIsNotUuid(): void
-    {
-        $id = "a";
-        $name = "test";
-
-        $this->expectException(\TypeError::class);
-        $order = new Order($id, $name);
-    }
-
     public function testOrderNameCannotBeEmpty(): void
     {
         $id = Uuid::v4();
         $name = "";
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(OrderNameBlankException::class);
         $order = new Order($id, $name);
     }
 

@@ -2,29 +2,18 @@
 
 namespace App\TekmanCandidate\Domain\Order;
 
-use App\Shared\Domain\AggregateRoot;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
-/**
- * @ORM\Entity()
- */
-class Order extends AggregateRoot
+class Order
 {
-    /**
-     * @ORM\Column(type="uuid")
-     */
     private Uuid $id;
     
-    /**
-     * @ORM\Column(type="string", length=20)
-     */
     private string $name;
 
     public function __construct(Uuid $id, string $name)
     {
         if (empty($name)) {
-            throw new \InvalidArgumentException("Order name cannot be empty");
+            throw new OrderNameBlankException("Order name cannot be empty");
         }
         // length name greater than 20
         if (strlen($name) > 20) {
@@ -37,6 +26,11 @@ class Order extends AggregateRoot
     public function id(): Uuid
     {
         return $this->id;
+    }
+
+    public function idAsString(): string
+    {
+        return $this->id->toRfc4122();
     }
 
     public function name(): string

@@ -6,7 +6,5 @@ interface OrdersRepository
 {
     public function save(Order $order): void;
 
-    public function find(int $id): ?Order;
-
-    public function findAll(): array;
+    public function findAll();
 }

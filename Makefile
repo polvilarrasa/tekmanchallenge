@@ -3,8 +3,10 @@
 setup:
 	docker-compose exec php composer install
 
-test-e2e:
-	docker-compose exec php ./vendor/bin/phpunit tests/TekmanCandidate/E2E
+	php bin/console doctrine:fixtures:load
+
+test-application:
+	docker-compose exec php ./vendor/bin/phpunit tests/TekmanCandidate/Application
 
 test-integration:
 	docker-compose exec php ./vendor/bin/phpunit tests/TekmanCandidate/Integration
