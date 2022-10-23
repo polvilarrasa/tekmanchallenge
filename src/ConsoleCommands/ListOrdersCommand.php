@@ -2,9 +2,9 @@
 
 namespace App\ConsoleCommands;
 
-use App\TekmanCandidate\Application\ListOrdersUseCase;
+use App\TekmanCandidate\Application\GetOrdersUseCase;
 use App\TekmanCandidate\Domain\Order\OrdersRepository;
-use App\TekmanCandidate\Infrastructure\Order\OrderConsoleTransformer;
+use App\TekmanCandidate\Infrastructure\Order\OrderJsonTransformer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,12 +30,38 @@ class ListOrdersCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $useCase = new ListOrdersUseCase(
+        $useCase = new GetOrdersUseCase(
             $this->ordersRepository,
-            new OrderConsoleTransformer()
+            new OrderJsonTransformer()
         );
 
-        $output->writeln($useCase->execute());
+        $orders = $useCase->execute();
+
+        $output->writeln($this->printOrders($orders));
+
         return Command::SUCCESS;
+    }
+
+    private function printOrders(array $orders): string
+    {
+        $result = "
+        ========================Tekman Candidate Begin======================
+
+        +-------------------- Orders ----------+---------+
+        | id                                   | name    |
+        +--------------------------------------+---------+
+        ";
+        foreach ($orders as $order) {
+            $result .= "| {$order['id']} | {$order['name']} |
+        ";
+        }
+        
+        $totalOrders = count($orders);
+
+        $result .= "+--------------- total orders: $totalOrders ------+---------+
+        
+        ========================Tekman Candidate End========================";
+
+        return $result;
     }
 }

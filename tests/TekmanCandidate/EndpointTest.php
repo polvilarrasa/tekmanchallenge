@@ -1,8 +1,10 @@
 <?php
 namespace App\Tests\Controller;
 
+use App\TekmanCandidate\Domain\Order\Order;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Uid\Uuid;
 
 class EndpointTest extends WebTestCase
 {

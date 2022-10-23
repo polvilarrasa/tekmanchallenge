@@ -2,8 +2,8 @@
 
 use App\TekmanCandidate\Application\GetOrdersUseCase;
 use App\TekmanCandidate\Domain\Order\Order;
+use App\TekmanCandidate\Domain\Order\OrdersRepository;
 use App\TekmanCandidate\Infrastructure\Order\OrderJsonTransformer;
-use App\Tests\TekmanCandidate\Integration\Infrastructure\FakeOrdersRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Uid\Uuid;
 
@@ -14,30 +14,33 @@ final class GetOrdersTest extends KernelTestCase
         return [
             [
                 'id' => $orders[0]->idAsString(),
-                'name' => $orders[0]->name()
+                'name' => $orders[0]->name(),
             ],
             [
                 'id' => $orders[1]->idAsString(),
-                'name' => $orders[1]->name()
-            ]
+                'name' => $orders[1]->name(),
+            ],
         ];
     }
 
     public function testGetOrdersUseCaseCorrectOutput(): void
     {
-        $fakeOrderRepository = new FakeOrdersRepository();
-
-        $order1 = new Order(Uuid::v4(), "order 1");
-        $order2 = new Order(Uuid::v4(), "order 2");
-
-        $fakeOrderRepository->save($order1);
-        $fakeOrderRepository->save($order2);
+        $orders = [
+            new Order(Uuid::v4(), 'Order 1'),
+            new Order(Uuid::v4(), 'Order 2'),
+        ];
+        
+        $ordersRepository = $this->createMock(OrdersRepository::class);
+        
+        $ordersRepository->expects($this->any())
+            ->method('findAll')
+            ->willReturn($orders);
         
         $useCase = new GetOrdersUseCase(
-            $fakeOrderRepository,
+            $ordersRepository,
             new OrderJsonTransformer()
         );
 
-        $this->assertEquals($this->getExpectedOutput(array($order1, $order2)), $useCase->execute());
+        $this->assertEquals($this->getExpectedOutput($orders), $useCase->execute());
     }
 }
